@@ -20,7 +20,7 @@
 #' plot(circGLM(th = rvmc(10, 1, 1)))
 #'
 #' dat <- generateCircGLMData(n = 100, nconpred = 1, ncatpred = 1)
-#' m   <- circGLM(th ~ ., dat)
+#' m   <- circGLM(th ~ ., dat, Q = 100, burnin = 0)
 #'
 #' # Traceplot by default
 #' plot(m)
@@ -91,7 +91,7 @@ plot.circGLM <- function(x, type = "trace", ...) {
 #'
 #' @examples
 #' dat <- generateCircGLMData()
-#' m   <- circGLM(th ~ ., dat)
+#' m   <- circGLM(th ~ ., dat, Q = 100, burnin = 0)
 #' plot(m, type = "predict")
 #' 
 plot_predict.circGLM <- function(m, x, d, th,
@@ -161,7 +161,7 @@ plot_predict.circGLM <- function(m, x, d, th,
 
 
   # Check if there is a grouping, then return the appropriate plot.
-  if ((is.na(d) | missing(d)) || ncol(d) == 0) {
+  if ((all(is.na(d)) | missing(d)) || (ncol(d) == 0)) {
     p <- ggplot2::ggplot(data = pdat, ggplot2::aes_string(y = "th", x = "x")) +
       ggplot2::geom_point() +
       ggplot2::stat_function(fun = predfun,

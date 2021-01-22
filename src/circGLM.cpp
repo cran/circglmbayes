@@ -230,7 +230,7 @@ double computeResultantLength (vec th) {
 }
 
 
-vec quantile(vec x, vec q) {
+vec internal_quantile(arma::vec x, arma::vec q) {
   // Compute a quantile of vector x for each proportion in vector q.
 
   int nx = x.size();
@@ -248,12 +248,12 @@ vec quantile(vec x, vec q) {
 }
 
 // [[Rcpp::export]]
-vec circQuantile(arma::vec th, vec q) {
+vec circQuantile(arma::vec th, arma::vec q) {
   // Compute a circular quantile.
 
   double rotation = computeMeanDirection(th) - pi;
 
-  return quantile(th + rotation, q) - rotation;
+  return internal_quantile(th + rotation, q) - rotation;
 }
 
 
@@ -831,7 +831,7 @@ Rcpp::List circGLMC(vec th, mat X, mat D,
   //////////////////////
 
   // Bounds for the CCI's
-  vec qbounds = vec(2);
+  vec qbounds = arma::vec(2);
   qbounds(0)  = (1-CIsize)/2.0;
   qbounds(1)  = 1-((1-CIsize)/2.0);
 
@@ -892,8 +892,8 @@ Rcpp::List circGLMC(vec th, mat X, mat D,
 
 
   for (int predi = 0; predi < K; predi++) {
-    bt_CCI.col(predi) = quantile(bt_chain.col(predi), qbounds);
-    zt_CCI.col(predi) = quantile(zt_chain.col(predi), qbounds);
+    bt_CCI.col(predi) = internal_quantile(bt_chain.col(predi), qbounds);
+    zt_CCI.col(predi) = internal_quantile(zt_chain.col(predi), qbounds);
   }
 
 
